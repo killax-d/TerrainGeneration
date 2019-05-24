@@ -2,13 +2,20 @@ package fr.killax.gui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class MainWindow extends JFrame {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
+	
+	public static boolean motionEnabled = false;
 	
 	private JFrame frame;
 	
@@ -18,8 +25,10 @@ public class MainWindow extends JFrame {
 		setTitle("Générateur de terrain V1.1-a");
 		setLocationRelativeTo(null);
 		setContentPane(new Canva());
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setUndecorated(true);
 		addShorcut();
+		addMotion();
 		show();
 	}
 	
@@ -30,6 +39,8 @@ public class MainWindow extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_F5) {
 					setContentPane(new Canva());
+					Canva canva = (Canva) getContentPane();
+					canva.generate();
 					revalidate();
 					repaint();
 				}
@@ -48,4 +59,67 @@ public class MainWindow extends JFrame {
 		});
 	}
 
+	private void addMotion() {
+		motionEnabled = true;
+		addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				Canva canva = (Canva) getContentPane();
+				if(e.getX() > WIDTH-48 && e.getY() < 32)
+					canva.setCloseHover(true);
+				else
+				{
+					canva.setCloseHover(false);
+					int x = e.getX();
+					x -= x % 16;
+					
+					int y = e.getY();
+					y -= y % 16;
+					
+					String msg = String.format("CURSOR : [%d,%d] CORRECTED : [%d,%d] BLOC : [%s]", e.getX(), e.getY(), x, y, canva.getBlocAt(x, y));
+					canva.setLabelInfo(msg);
+				}
+				revalidate();
+				repaint();
+				
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				
+			}
+		});
+
+		addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Canva canva = (Canva) getContentPane();
+				if(canva.isCloseHovered())
+					dispose();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				
+			}
+			
+		});
+	}
 }
