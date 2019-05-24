@@ -38,6 +38,7 @@ public class Canva extends Container {
 	}
 	
 	public void paint(Graphics g) {
+		super.paint(g);
 		for (int i = 0; i < points.size(); i++) {
 			int x = (int) points.get(i).getX()*SPRITE_WIDTH;
 			int y = (int) points.get(i).getY()+MainWindow.HEIGHT/2;
