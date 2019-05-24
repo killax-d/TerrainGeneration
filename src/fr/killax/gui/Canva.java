@@ -67,6 +67,7 @@ public class Canva extends Container {
 	public void generate() {
 		generateTerrain();
 		generateTrees();
+		generateFlowers();
 	}
 	
 	public void setLabelInfo(String content) {
@@ -156,6 +157,16 @@ public class Canva extends Container {
 			treeSpace--;
 		}
 		
+	}
+	
+	private void generateFlowers() {
+		for (int i = 0; i < points.size(); i++) {
+			int x = (int) points.get(i).getX()*SPRITE_WIDTH;
+			int y = (int) points.get(i).getY()+MainWindow.HEIGHT/2-16;
+			y -= y % 16;
+			if(getBlocAt(x, y) == "void")
+				blocs.put(new Point(x, y), String.format("flower_%d.png", rand.nextInt(5)));
+		}
 	}
 	
 }
