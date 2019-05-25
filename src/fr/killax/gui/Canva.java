@@ -1,8 +1,10 @@
 package fr.killax.gui;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,8 @@ public class Canva extends Container {
 	public static final String LEAVES = "leaves.png";
 	public static final String VOID = "void";
 	
+	public static final String[] available_blocs = new String[] {GRASS, DIRT, STONE, WOOD, LEAVES};
+	
 	private final int SPRITE_WIDTH = 16;
 	private final int SPRITE_HEIGHT = 16;
 	private final int DIRT_COUNT = 3;
@@ -30,6 +34,8 @@ public class Canva extends Container {
 	private JLabel label;
 	private boolean close_hover;
 	private Point case_hover;
+	private String current_bloc;
+	private int current_bloc_id;
 	
 	private int a;
 	private int b;
@@ -65,6 +71,19 @@ public class Canva extends Container {
 		case_hover = point;
 	}
 	
+	public void setBloc(int id) {
+		current_bloc = available_blocs[id];
+		current_bloc_id = id;
+	}
+	
+	public int getCurrentBlocId() {
+		return current_bloc_id;
+	}
+
+	public String getCurrentBloc() {
+		return current_bloc;
+	}
+	
 	public boolean isCloseHovered() {
 		return close_hover;
 	}
@@ -89,9 +108,10 @@ public class Canva extends Container {
 		g.setColor(Color.WHITE);
 		g.drawString(label.getText(), label.getX(), label.getY());
 		g.drawImage((close_hover ? Assets.getImage("close_hover.jpg") : Assets.getImage("close.jpg")), MainWindow.WIDTH-48, 0, 48, 32, null);
-		if (case_hover != null) {
-			g.setColor(new Color(1F, 1F, 1F, 0.5F));
-			g.fillRect((int) case_hover.getX(), (int) case_hover.getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
+		if (case_hover != null && current_bloc != VOID) {
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F));
+			g2d.drawImage(Assets.getImage(current_bloc), (int) case_hover.getX(), (int) case_hover.getY(), SPRITE_WIDTH, SPRITE_HEIGHT, null);
 		}
 	}
 	

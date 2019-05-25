@@ -7,6 +7,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,7 +28,9 @@ public class MainWindow extends JFrame {
 		setSize(WIDTH, HEIGHT);
 		setTitle("Générateur de terrain V1.1-a");
 		setLocationRelativeTo(null);
-		setContentPane(new Canva());
+		Canva canva = new Canva();
+		canva.setBloc(0);
+		setContentPane(canva);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setUndecorated(true);
 		addShorcut();
@@ -63,6 +67,22 @@ public class MainWindow extends JFrame {
 
 	private void addMotion() {
 		motionEnabled = true;
+		addMouseWheelListener(new MouseWheelListener() {
+			
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				Canva canva = (Canva) getContentPane();
+				int id = canva.getCurrentBlocId();
+	            if (e.getWheelRotation() < 0)
+	            	canva.setBloc((++id >= Canva.available_blocs.length ? 0 : id));
+	            else
+	            	canva.setBloc((--id < 0 ? Canva.available_blocs.length-1 : id));
+				revalidate();
+				repaint();
+			}
+			
+		});
+		
 		addMouseMotionListener(new MouseMotionListener() {
 			
 			@Override
@@ -103,7 +123,7 @@ public class MainWindow extends JFrame {
 				if (SwingUtilities.isLeftMouseButton(e))
 					canva.setBlocAt(x, y, Canva.VOID);
 				else
-					canva.setBlocAt(x, y, Canva.STONE);
+					canva.setBlocAt(x, y, canva.getCurrentBloc());
 				revalidate();
 				repaint();
 			}
