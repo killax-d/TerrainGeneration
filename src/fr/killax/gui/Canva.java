@@ -14,12 +14,12 @@ import fr.killax.assets.Assets;
 
 public class Canva extends Container {
 
-	private final String GRASS = "grass.png";
-	private final String DIRT = "dirt.png";
-	private final String STONE = "stone.png";
-	private final String WOOD = "wood.png";
-	private final String LEAVES = "leaves.png";
-	private final String VOID = "void";
+	public static final String GRASS = "grass.png";
+	public static final String DIRT = "dirt.png";
+	public static final String STONE = "stone.png";
+	public static final String WOOD = "wood.png";
+	public static final String LEAVES = "leaves.png";
+	public static final String VOID = "void";
 	
 	private final int SPRITE_WIDTH = 16;
 	private final int SPRITE_HEIGHT = 16;
@@ -29,6 +29,7 @@ public class Canva extends Container {
 	
 	private JLabel label;
 	private boolean close_hover;
+	private Point case_hover;
 	
 	private int a;
 	private int b;
@@ -59,6 +60,10 @@ public class Canva extends Container {
 	public void setCloseHover(boolean hover) {
 		close_hover = hover;
 	}
+
+	public void setCaseHover(Point point) {
+		case_hover = point;
+	}
 	
 	public boolean isCloseHovered() {
 		return close_hover;
@@ -84,6 +89,10 @@ public class Canva extends Container {
 		g.setColor(Color.WHITE);
 		g.drawString(label.getText(), label.getX(), label.getY());
 		g.drawImage((close_hover ? Assets.getImage("close_hover.jpg") : Assets.getImage("close.jpg")), MainWindow.WIDTH-48, 0, 48, 32, null);
+		if (case_hover != null) {
+			g.setColor(new Color(1F, 1F, 1F, 0.5F));
+			g.fillRect((int) case_hover.getX(), (int) case_hover.getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
+		}
 	}
 	
 	private void drawMap(Graphics g){
@@ -100,6 +109,18 @@ public class Canva extends Container {
 				return blocs.get(point);
 		}
 		return "void";
+	}
+	
+	public void setBlocAt(int x, int y, String bloc) {
+		Point oldPoint = null;
+		for (Point point : blocs.keySet()) {
+			if ((int) point.getX() == x && (int) point.getY() == y)
+				oldPoint = point;
+		}
+		if(oldPoint != null)
+			blocs.remove(oldPoint);
+		if(bloc != VOID)
+			blocs.put(new Point(x, y), bloc);
 	}
 	
 	private void generateTerrain() {

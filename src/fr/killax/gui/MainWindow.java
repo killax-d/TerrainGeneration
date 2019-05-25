@@ -1,5 +1,6 @@
 package fr.killax.gui;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -9,6 +10,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 public class MainWindow extends JFrame {
 
@@ -76,7 +78,8 @@ public class MainWindow extends JFrame {
 					
 					int y = e.getY();
 					y -= y % 16;
-					
+
+					canva.setCaseHover(new Point(x, y));
 					String msg = String.format("CURSOR : [%d,%d] CORRECTED : [%d,%d] BLOC : [%s]", e.getX(), e.getY(), x, y, canva.getBlocAt(x, y));
 					canva.setLabelInfo(msg);
 				}
@@ -86,37 +89,62 @@ public class MainWindow extends JFrame {
 			}
 
 			@Override
-			public void mouseDragged(MouseEvent arg0) {
+			public void mouseDragged(MouseEvent e) {
+				Canva canva = (Canva) getContentPane();
+				int x = e.getX();
+				x -= x % 16;
 				
+				int y = e.getY();
+				y -= y % 16;
+				canva.setCaseHover(new Point(x, y));
+				String msg = String.format("CURSOR : [%d,%d] CORRECTED : [%d,%d] BLOC : [%s]", e.getX(), e.getY(), x, y, canva.getBlocAt(x, y));
+				canva.setLabelInfo(msg);
+				
+				if (SwingUtilities.isLeftMouseButton(e))
+					canva.setBlocAt(x, y, Canva.VOID);
+				else
+					canva.setBlocAt(x, y, Canva.STONE);
+				revalidate();
+				repaint();
 			}
 		});
 
 		addMouseListener(new MouseListener() {
 
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(MouseEvent e) {
 				Canva canva = (Canva) getContentPane();
 				if(canva.isCloseHovered())
 					dispose();
+				
+				int x = e.getX();
+				x -= x % 16;
+				
+				int y = e.getY();
+				y -= y % 16;
+				if (SwingUtilities.isLeftMouseButton(e))
+					canva.setBlocAt(x, y, Canva.VOID);
+				else
+					canva.setBlocAt(x, y, Canva.STONE);
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent arg0) {
+			public void mouseEntered(MouseEvent e) {
 				
 			}
 
 			@Override
-			public void mouseExited(MouseEvent arg0) {
+			public void mouseExited(MouseEvent e) {
 				
 			}
 
 			@Override
-			public void mousePressed(MouseEvent arg0) {
+			public void mousePressed(MouseEvent e) {
 				
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
+			public void mouseReleased(MouseEvent e) {
 				
 			}
 			
