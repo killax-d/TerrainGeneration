@@ -58,6 +58,8 @@ public class Canva extends Container {
 		for (int x = 0; x < WIDTH; x++) {
 			points.add(new Point(x ,a*f(x)+b));
 		}
+		current_bloc = GRASS;
+		current_bloc_id = 0;
 		generate();
 		add(label);
 		close_hover = false;
@@ -193,7 +195,7 @@ public class Canva extends Container {
 					}
 				}
 				
-				treeSpace = rand.nextInt(6);
+				treeSpace = rand.nextInt(6)+6;
 			}
 			treeSpace--;
 		}
@@ -205,8 +207,9 @@ public class Canva extends Container {
 			int x = (int) points.get(i).getX()*SPRITE_WIDTH;
 			int y = (int) points.get(i).getY()+MainWindow.HEIGHT/2-16;
 			y -= y % 16;
+			int flowerId = rand.nextInt(10);
 			if(getBlocAt(x, y) == "void")
-				blocs.put(new Point(x, y), String.format("flower_%d.png", rand.nextInt(5)));
+				blocs.put(new Point(x, y), String.format("flower_%d.png", (flowerId > 4 ? 4 : flowerId)));
 		}
 	}
 	

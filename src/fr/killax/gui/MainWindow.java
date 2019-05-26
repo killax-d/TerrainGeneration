@@ -1,9 +1,10 @@
 package fr.killax.gui;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -11,13 +12,14 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 public class MainWindow extends JFrame {
-
-	public static final int WIDTH = 800;
-	public static final int HEIGHT = 600;
+	
+	static GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+	
+	public static int WIDTH;
+	public static int HEIGHT;
 	
 	public static boolean motionEnabled = false;
 	
@@ -25,14 +27,15 @@ public class MainWindow extends JFrame {
 	
 	public MainWindow() {
 		frame = this;
-		setSize(WIDTH, HEIGHT);
+		setSize(device.getDisplayMode().getWidth(), device.getDisplayMode().getHeight());
+		WIDTH = getWidth();
+		HEIGHT = getHeight();
 		setTitle("Générateur de terrain V1.1-a");
-		setLocationRelativeTo(null);
-		Canva canva = new Canva();
-		canva.setBloc(0);
-		setContentPane(canva);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setUndecorated(true);
+		setLocationRelativeTo(null);
+		setContentPane(new Canva());
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		//setUndecorated(true);
 		addShorcut();
 		addMotion();
 		show();
@@ -116,14 +119,16 @@ public class MainWindow extends JFrame {
 				
 				int y = e.getY();
 				y -= y % 16;
-				canva.setCaseHover(new Point(x, y));
-				String msg = String.format("CURSOR : [%d,%d] CORRECTED : [%d,%d] BLOC : [%s]", e.getX(), e.getY(), x, y, canva.getBlocAt(x, y));
-				canva.setLabelInfo(msg);
 				
 				if (SwingUtilities.isLeftMouseButton(e))
 					canva.setBlocAt(x, y, Canva.VOID);
 				else
 					canva.setBlocAt(x, y, canva.getCurrentBloc());
+				
+				canva.setCaseHover(new Point(x, y));
+				String msg = String.format("CURSOR : [%d,%d] CORRECTED : [%d,%d] BLOC : [%s]", e.getX(), e.getY(), x, y, canva.getBlocAt(x, y));
+				canva.setLabelInfo(msg);
+				
 				revalidate();
 				repaint();
 			}
@@ -145,7 +150,14 @@ public class MainWindow extends JFrame {
 				if (SwingUtilities.isLeftMouseButton(e))
 					canva.setBlocAt(x, y, Canva.VOID);
 				else
-					canva.setBlocAt(x, y, Canva.STONE);
+					canva.setBlocAt(x, y, canva.getCurrentBloc());
+				
+				canva.setCaseHover(new Point(x, y));
+				String msg = String.format("CURSOR : [%d,%d] CORRECTED : [%d,%d] BLOC : [%s]", e.getX(), e.getY(), x, y, canva.getBlocAt(x, y));
+				canva.setLabelInfo(msg);
+				
+				revalidate();
+				repaint();
 			}
 
 			@Override
@@ -170,4 +182,5 @@ public class MainWindow extends JFrame {
 			
 		});
 	}
+	
 }
